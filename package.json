@@ -1,0 +1,22 @@
+{
+  "name": "incubrix-distribution-network",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Connector service prototype for the IncuBrix Distribution assessment",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts",
+    "batch": "tsx src/batch.ts"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "express": "^4.21.2" },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

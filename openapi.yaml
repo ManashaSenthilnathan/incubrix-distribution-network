@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  title: IncuBrix Long-Tail Distribution Service
+  version: 0.2.0
+  description: Simulation-first connector service with rule checks, asynchronous jobs, catalogue import, certification evidence and a local signed-webhook sandbox.
+servers:
+  - url: http://localhost:8080
+paths:
+  /health:
+    get:
+      summary: Liveness check
+      responses:
+        '200': { description: Service is running }
+  /ready:
+    get:
+      summary: Readiness and simulation mode
+      responses:
+        '200': { description: Service readiness }
+  /api/v1/connectors:
+    get:
+      summary: List connector manifests
+      responses:
+        '200': { description: Six connector manifests }
+  /api/v1/destinations:
+    get:
+      summary: List destinations configured during this process
+      responses:
+        '200': { description: Destination catalogue }
+    post:
+      summary: Add or update a destination configuration row
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [id, platform_key], properties: { id: { type: string }, name: { type: string }, platform_key: { type: string }, base_url: { type: string, format: uri }, frequency_cap: { type: integer, minimum: 0 }, self_promo_allowed: { type: boolean }, links_allowed: { type: boolean }, disclosure_required: { type: boolean }, automation_allowed: { type: boolean } } }
+      responses:
+        '201': { description: Destination configured }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /api/v1/publish:
+    post:
+      summary: Validate rules and queue a publication job
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [destination, rendition], properties: { destination: { type: object }, rendition: { type: object, required: [title, body], properties: { title: { type: string }, body: { type: string }, url: { type: string }, isPromotional: { type: boolean }, aiGenerated: { type: boolean }, media: { type: array, items: { type: string } } } } } }
+      responses:
+        '202': { description: Job accepted }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { description: Idempotency key reused with different request }
+        '422': { description: Destination rules blocked the content }
+        '429': { description: Frequency cap reached }
+  /api/v1/jobs/{job_id}:
+    get:
+      summary: Get asynchronous job status and result
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Job state, progress and result }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/catalogue:
+    get:
+      summary: List imported destination catalogue rows
+      responses:
+        '200': { description: Catalogue rows and count }
+  /api/v1/catalogue/import:
+    post:
+      summary: Validate and import catalogue rows or CSV text
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, properties: { csv: { type: string }, rows: { type: array, items: { type: object } } } }
+      responses:
+        '202': { description: Import job accepted }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { description: Idempotency key conflict }
+  /api/v1/certifications:
+    get:
+      summary: List certification lifecycle evidence
+      responses:
+        '200': { description: Certification records }
+    post:
+      summary: Run a safe connector lifecycle certification job
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [destination], properties: { destination: { type: object }, rendition: { type: object }, approved_test_instance: { type: boolean }, connection: { type: object } } }
+      responses:
+        '202': { description: Certification job accepted }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { description: Real posting requires explicit approved test instance }
+  /api/v1/certifications/{certification_id}:
+    get:
+      summary: Get certification evidence record
+      parameters:
+        - in: path
+          name: certification_id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Certification evidence }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /connector/v1/{connector_key}/{method}:
+    post:
+      summary: Appendix A connector contract entry point
+      parameters:
+        - in: path
+          name: connector_key
+          required: true
+          schema: { type: string, enum: [discourse, lemmy, devto, ghost, signed_webhook, assisted] }
+        - in: path
+          name: method
+          required: true
+          schema: { type: string, enum: [validate, publish, get_status, delete, fetch_metrics, refresh_auth, build_assist_pack] }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200': { description: Connector method result }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { description: Expired or rejected credentials }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { description: Connector or validation error }
+        '429': { description: Platform rate limit }
+components:
+  parameters:
+    IdempotencyKey:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema: { type: string, minLength: 1 }
+    CorrelationId:
+      in: header
+      name: X-Correlation-Id
+      required: false
+      schema: { type: string }
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  schemas:
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, retryable]
+          properties:
+            code: { type: string, pattern: '^[A-Z][A-Z0-9_]+$' }
+            message: { type: string }
+            retryable: { type: boolean }
+            details: {}

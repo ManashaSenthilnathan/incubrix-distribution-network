@@ -1,0 +1,9 @@
+[
+  {"path":"/health"},
+  {"path":"/ready"},
+  {"path":"/api/v1/connectors"},
+  {"path":"/api/v1/destinations","method":"POST","idempotencyKey":"destination-demo-001","body":{"id":"devto-demo","name":"Dev.to demo","platform_key":"devto","base_url":"https://dev.to","title_max_chars":128,"body_max_chars":100000,"links_allowed":true,"frequency_cap":2,"self_promo_allowed":true,"disclosure_required":false,"automation_allowed":true}},
+  {"path":"/api/v1/publish","method":"POST","idempotencyKey":"publish-demo-001","body":{"destination":{"id":"devto-demo","name":"Dev.to demo","platform_key":"devto","base_url":"https://dev.to","title_max_chars":128,"body_max_chars":100000,"links_allowed":true,"frequency_cap":2,"self_promo_allowed":true,"disclosure_required":false,"automation_allowed":true},"rendition":{"title":"Simulation smoke test","body":"This synthetic content is for simulation only."}}},
+  {"path":"/api/v1/publish","method":"POST","idempotencyKey":"publish-rules-demo-001","body":{"destination":{"id":"no-promo-demo","name":"No promotion community","platform_key":"discourse","base_url":"https://forum.example.test","self_promo_allowed":false,"automation_allowed":true},"rendition":{"title":"Please read my blog","body":"A promotional test", "isPromotional":true}}},
+  {"path":"/api/v1/catalogue/import","method":"POST","idempotencyKey":"catalogue-demo-001","body":{"rows":[{"name":"AI video community","url":"https://community.example.test/ai-video","platform_key":"discourse","category":"AI video creators"},{"name":"Duplicate URL","url":"https://COMMUNITY.example.test/ai-video/","platform_key":"discourse"},{"name":"Invalid URL","url":"not-a-url","platform_key":"lemmy"}]}}
+]

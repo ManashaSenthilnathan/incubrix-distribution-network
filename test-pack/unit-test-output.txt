@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: CSV parser handles quoted commas and headers
+ok 1 - CSV parser handles quoted commas and headers
+  ---
+  duration_ms: 4.650842
+  type: 'test'
+  ...
+# Subtest: URL normalization removes query, fragment, case and trailing slash
+ok 2 - URL normalization removes query, fragment, case and trailing slash
+  ---
+  duration_ms: 1.712248
+  type: 'test'
+  ...
+# Subtest: catalogue validates rows and detects normalized duplicates
+ok 3 - catalogue validates rows and detects normalized duplicates
+  ---
+  duration_ms: 2.50169
+  type: 'test'
+  ...
+# Subtest: six required connector keys have manifests
+ok 4 - six required connector keys have manifests
+  ---
+  duration_ms: 5.719114
+  type: 'test'
+  ...
+# Subtest: simulated publish is idempotent for the same connector and key
+ok 5 - simulated publish is idempotent for the same connector and key
+  ---
+  duration_ms: 4.470433
+  type: 'test'
+  ...
+# Subtest: simulated post can be checked and deleted
+ok 6 - simulated post can be checked and deleted
+  ---
+  duration_ms: 0.320773
+  type: 'test'
+  ...
+# Subtest: status lookup rejects unknown simulated post IDs
+ok 7 - status lookup rejects unknown simulated post IDs
+  ---
+  duration_ms: 1.509316
+  type: 'test'
+  ...
+# Subtest: HMAC helper creates a SHA-256 signature
+ok 8 - HMAC helper creates a SHA-256 signature
+  ---
+  duration_ms: 0.858739
+  type: 'test'
+  ...
+# Subtest: retrying a previously deleted simulated post does not resurrect it
+ok 9 - retrying a previously deleted simulated post does not resurrect it
+  ---
+  duration_ms: 0.59428
+  type: 'test'
+  ...
+# Subtest: assisted connector creates a manual posting pack instead of publishing
+ok 10 - assisted connector creates a manual posting pack instead of publishing
+  ---
+  duration_ms: 0.8204
+  type: 'test'
+  ...
+# Subtest: validateRendition blocks title overflow, links, promotion and missing AI disclosure
+ok 11 - validateRendition blocks title overflow, links, promotion and missing AI disclosure
+  ---
+  duration_ms: 2.799386
+  type: 'test'
+  ...
+# Subtest: weekly frequency cap blocks a second publication
+ok 12 - weekly frequency cap blocks a second publication
+  ---
+  duration_ms: 0.959407
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 714.471513

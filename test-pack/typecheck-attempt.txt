@@ -1,0 +1,3 @@
+Command: tsc --noEmitOnError false --pretty false
+Result: error TS2688: Cannot find type definition file for 'node'. The file is in the program because it is specified in compilerOptions.types.
+Context: npm install failed because the environment could not resolve registry.npmjs.org (EAI_AGAIN), so @types/node was unavailable. This is not a passing typecheck.

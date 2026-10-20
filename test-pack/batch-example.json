@@ -1,0 +1,6 @@
+[
+  {"path":"/health"},
+  {"path":"/ready"},
+  {"path":"/api/v1/connectors"},
+  {"path":"/api/v1/destinations"}
+]
